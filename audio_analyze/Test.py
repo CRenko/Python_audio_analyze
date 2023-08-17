@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 from Timefeature import *
 import numpy as np
 
-fs, data = wavfile.read('恋音と雨空鼓点.wav')
 
-inc = 100
+fs, data = wavfile.read('恋音と雨空.wav')
 # 窗口长度
 wlen = 1000
+inc = wlen
 # 取一个长度为wlen的汉明窗
 win = w = np.hanning(wlen)
 # 实际数据的总长度
@@ -43,6 +43,7 @@ for en in EN:
         if n > 6:
             n = 1
         count = 0
+        start = en
     else:
         printers.append([frameTime[np.where(EN == start)], 1 + (count - 5) // 5, n])
         printers.append([frameTime[np.where(EN == start)], 1 + (count - 5) // 5, 7 - n])
@@ -50,6 +51,7 @@ for en in EN:
         if n > 6:
             n = 1
         count = 0
+        start = en
 data = open("data.txt", 'w+')
 print("{%s:[" % name, file=data)
 for printer in printers:
