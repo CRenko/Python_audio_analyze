@@ -54,11 +54,11 @@ data = open("data.txt", 'w+')
 print("{%s:[" % name, file=data)
 for printer in printers:
     if printer != printers[-1]:
-        print("{\"time\":%.1ff, \"length\":%d, \"track\":%d}," % (
+        print("{\"time\":%.1f, \"length\":%d, \"track\":%d}," % (
             printer[0], printer[1], printer[2]),
               file=data)
     else:
-        print("{\"time\":%.1ff, \"length\":%d, \"track\":%d}" % (
+        print("{\"time\":%.1f, \"length\":%d, \"track\":%d}" % (
             printer[0], printer[1], printer[2]),
               file=data)
 
