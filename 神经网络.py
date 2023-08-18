@@ -40,16 +40,9 @@ win = w = np.hanning(wlen)        # 取一个长度为wlen的汉明窗
 N = len(data)                     # 实际数据的总长度
 time = [i / fs for i in range(N)] # 用窗口分割后的数据总长度
 EN = STEn(data[:,0], wlen, inc)   # 短时能量数组
-
 frameTime = FrameTimeC(len(EN), wlen, inc, fs)
-data=open("data.json",'w+')
 
-value = 0.30                      # value设置阈值
-name = "\"song1\""                # name设置导出的数据的组名
-print("{%s:[" %(name),file=data)
-
-
-
+#####
 
 t = [[EN[i],frameTime[i]] for i in range(len(EN))]     #原始数据列表
 A = np.mat(t)                                          #原始数据矩阵
@@ -59,51 +52,38 @@ D = np.matlib.rand((3,2))                              #随机矩阵2
 E = D*C
 F = np.matlib.rand((2,200))                            #随机矩阵3
 G = E*F                                                #谱面信息矩阵
-print(G)
+print(G.T)
 
+#####
 
+target_list = []                                       #目标列表
 
 n = 1
-
 def Renko(i):
     global n
     lst = []
     lst1 = []
-    while EN[i] >= np.max(EN) * value:
+    while EN[i] >= np.max(EN) * 0.30:
         lst.append(frameTime[i])
         lst1.append(EN[i])
         if i < len(EN)-1:
             i += 1
     if len(lst) >= 5:
-        print("{\"time\":%.1f, \"length\":%d, \"track\":%d}," %(lst[0],len(lst)/5,n),file=data)
-
-        
+        target_list.append([round(lst[0],1),round(len(lst)/5),n])
         count = 0
         for j in lst1:
             if j >= np.max(EN) * 0.5:
                 count += 1
         if count >= len(lst)/2:
-            print("{\"time\":%.1f, \"length\":%d, \"track\":%d}," %(lst[0],len(lst)/5,7-n),file=data)
-
-            
+            target_list.append([round(lst[0],1),round(len(lst)/5),7-n])  
         n += 1
         if n > 6:
             n = 1
     return lst
 
 i = 0
-
 while i < len(EN):
     i += len(Renko(i)) + 1
 	  
-print("{\"time\":%.1f, \"length\":%d, \"track\":%d}]}" %(frameTime[len(frameTime)-1],0,0),file=data)
-data.close()
-
-
-
-#画图的
-#fig = plt.figure(figsize=(40, 10))
-
-#plt.subplot(1, 1, 1)
-#plt.plot(frameTime, EN)
-#plt.savefig('Energy.png')
+target_matrix = np.mat(target_list)                    #目标矩阵
+print(target_matrix)
