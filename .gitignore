@@ -1,2 +1,4 @@
-/audio_analyze/music/
-/audio_analyze/data/
+/audio_analyze/music/*
+!/audio_analyze/music/.gitkeep
+/audio_analyze/data/*
+!/audio_analyze/data/.gitkeep
