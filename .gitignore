@@ -2,3 +2,5 @@
 !/audio_analyze/music/.gitkeep
 /audio_analyze/data/*
 !/audio_analyze/data/.gitkeep
+/.idea
+/audio_analyze/__pycache__

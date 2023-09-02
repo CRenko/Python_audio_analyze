@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from Timefeature import *
 import numpy as np
 
-def creator(file):
+def creator(file,name,data_path):
     fs, datas = wavfile.read(file)
     # 窗口长度
     wlen = 1000
@@ -21,7 +21,6 @@ def creator(file):
     a = frameTime[EN > (np.max(EN) * 0.4)]
     # value设置阈值,name设置导出的数据的组名
     value = 0.3
-    name = "\""+file+"\""
     # 最小有效短时能量
     minEN = np.max(EN) * value
     printers = []
@@ -52,7 +51,7 @@ def creator(file):
                 n = 1
             count = 0
             start = en
-    data = open("data/data.txt", 'w+')
+    data = open(data_path+name+".json", 'w+')
     print("{%s:[" % name, file=data)
     for printer in printers:
         if printer != printers[-1]:

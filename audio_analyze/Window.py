@@ -5,9 +5,14 @@ from tkinter import filedialog
 import shutil
 import io
 from pydub import AudioSegment
+import Creator
 
-music_path = "music/"
-data_path = "data/"
+game_data_path = "E:/A/My project_Data/StreamingAssets/"
+music_path = game_data_path+"Music/"
+data_path = game_data_path+"Json/"
+text_path = game_data_path+"Text.txt"
+
+
 
 # def mp3_to_wav(path,file):
 #     fp = open(path, 'rb')
@@ -30,6 +35,7 @@ data_path = "data/"
 
 class MY_GUI():
     texts = ''
+
     def __init__(self, init_window_name):
         self.init_window_name = init_window_name
 
@@ -52,7 +58,8 @@ class MY_GUI():
         # 按钮
         # self.open_file_button = Button(self.init_window_name, text="打开文件", bg="lightblue", width=10,command=self.open_file)
         # self.open_file_button.grid(row=2, column=40)
-        self.trans_file_button = Button(self.init_window_name, text="生成谱子", bg="#FF5533", width=10,command=self.trans_file)
+        self.trans_file_button = Button(self.init_window_name, text="生成谱子", bg="#FF5533", width=10,
+                                        command=self.trans_file)
         self.trans_file_button.grid(row=3, column=40)
 
     def prints(self):
@@ -64,23 +71,39 @@ class MY_GUI():
         if ".wav" in file_path:
             pass
         elif ".mp3" in file_path:
-            mp3_to_wav(file_path)
+            pass
+        else:
+            self.texts = "文件错误"
 
     def trans_file(self):
         all_file_path = filedialog.askopenfilename(title=u'选择音乐', initialdir=(os.path.expanduser('music/')))
-        file_path,file_name=os.path.split(all_file_path)
+        file_path, file_name = os.path.split(all_file_path)
+        name = file_name.split(".")[0]
+        try:
+            if ".wav" in file_name:
+                shutil.copy(all_file_path, music_path + file_name)
+            elif ".mp3" in file_name:
+                # mp3_to_wav(all_file_path,file_name.split(".")[0])
+                mp3_file = AudioSegment.from_mp3(file=all_file_path)
+                mp3_file.set_frame_rate(mp3_file.frame_rate).export(name + ".wav", format="wav")
+            else:
+                raise RuntimeError
 
-
-        if ".wav" in file_name:
-            shutil.copy(all_file_path, music_path + file_name)
-        elif ".mp3" in file_name:
-            # mp3_to_wav(all_file_path,file_name.split(".")[0])
-            mp3_file = AudioSegment.from_mp3(file=all_file_path)
-            mp3_file.set_frame_rate(mp3_file.frame_rate).export(file_name.split(".")[0]+".wav",format="wav")
-        else:
+        except shutil.SameFileError:
+            Creator.creator(all_file_path, name, data_path)
+            with open(text_path, encoding="utf-8",mode="a+") as data:
+                count= len(data.readline())
+                data.write(str(count)+"|"+name+"|/"+name+".json")
+        except RuntimeError:
             self.texts = "文件格式错误"
-        print(all_file_path+" "+ file_name)
+        else:
+            Creator.creator(all_file_path, file_name.split(".")[0], data_path)
+            with open(text_path, encoding="utf-8",mode="a+") as data:
+                count = len(open(text_path, encoding="utf-8",mode='rU').readlines()) + 1
+                data.write(str(count)+"|"+name+"|/"+name+".json\n")
 
+
+        print(all_file_path + " " + file_name)
 
 
 def gui_start():
